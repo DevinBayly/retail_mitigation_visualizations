@@ -1,0 +1,14 @@
+{
+  "version": 3,
+  "file": "bundle.css",
+  "sources": [
+    "App.svelte",
+    "tickEle.svelte"
+  ],
+  "sourcesContent": [
+    "<script>\n\texport let name;\n  let ID = \"COVID\"\n  import {RunVega} from './vga.js'\n  RunVega()\n</script>\n\n<style>\n.holder {\n  width:100%;\n  display:flex;\n\n}\n#tickBoxes {\nwidth:100%;\ndisplay:flex;\nflex-wrap:wrap;\nalign-items:center;\n}\n</style>\n<div id=\"tickBoxes\"></div>\n<div id=\"charts\" class=\"holder\"></div>\n",
+    "<script>\nexport let term\nexport let callback\n</script>\n\n<style>\n.holder {\nmargin :2px;\nborder-radius:10px;\nbackground:#80808057;\npadding:2px;\ndisplay:flex;\nalign-items:center;\n}\ninput {\nmargin:revert;\n}\n</style>\n\n<div class=\"holder\">\n  <div>\n  <label>{term}</label>\n  </div>\n  <div>\n<input type=\"checkbox\" on:change={()=> {callback(term)}}>\n</div>\n</div>\n"
+  ],
+  "names": [],
+  "mappings": "AAQA,OAAO,eAAC,CAAC,AACP,MAAM,IAAI,CACV,QAAQ,IAAI,AAEd,CAAC,AACD,UAAU,eAAC,CAAC,AACZ,MAAM,IAAI,CACV,QAAQ,IAAI,CACZ,UAAU,IAAI,CACd,YAAY,MAAM,AAClB,CAAC;ACZD,OAAO,eAAC,CAAC,AACT,MAAM,CAAE,GAAG,CACX,cAAc,IAAI,CAClB,WAAW,SAAS,CACpB,QAAQ,GAAG,CACX,QAAQ,IAAI,CACZ,YAAY,MAAM,AAClB,CAAC,AACD,KAAK,eAAC,CAAC,AACP,OAAO,MAAM,AACb,CAAC"
+}
