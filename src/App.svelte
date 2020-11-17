@@ -9,7 +9,7 @@
 .holder {
   width:100%;
   display:flex;
-
+  flex-direction:column;
 }
 #tickBoxes {
 width:100%;

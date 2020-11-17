@@ -26,6 +26,7 @@ let Plot = (data,id)=> ({
     vegaEmbed(`#${this.id}`, this.vlSpec);
   },
   create() {
+    this.id = this.id.replace(" ","-")
     this.div = document.createElement('div')
     this.div.id = this.id
     this.div.style.width = "100%"
