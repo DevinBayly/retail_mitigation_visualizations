@@ -23,12 +23,11 @@ let Plot = (data,id)=> ({
     // Embed the visualization in the container with id `vis`
   },
   graph() {
-    vegaEmbed(`#${this.id}`, this.vlSpec);
+    vegaEmbed(`#${this.id.replace(/ /g,"-")}`, this.vlSpec);
   },
   create() {
-    this.id = this.id.replace(" ","-")
     this.div = document.createElement('div')
-    this.div.id = this.id
+    this.div.id = this.id.replace(/ /g,"-")
     this.div.style.width = "100%"
     document.querySelector("#charts").append(this.div)
     this.makeSpec()
