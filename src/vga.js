@@ -11,6 +11,9 @@ let Plot = (data,id)=> ({
       "data":{
         "values":this.data
       },
+      "transform":[
+        {"filter":"datum.date > datetime('2020')"}
+      ],
       "width":"container",
       "mark":"point",
       "encoding":{
@@ -54,13 +57,19 @@ export let RunVega = async ()=> {
     //trying covid first
 
     let termData = dataTransformID(data[term]) 
+    if (termData.length == 2) {
+      console.log("not enough data")
+      alert(`no data for '${term}'`)
+      return
+    }
     let plt = Plot(termData,term)
     plt.create()
     } else {
       console.log("term not found",term)
     }
   }
-  for (let term in data) {
+  let sortedKeys = Object.keys(data).sort()
+  for (let term of sortedKeys) {
     let TE = new TickEle({
       target:document.querySelector("#tickBoxes"),
       props:{
