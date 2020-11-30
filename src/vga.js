@@ -1,3 +1,4 @@
+import * as d3 from "d3"
 import TickEle from "./tickEle.svelte"
 let Plot = (data,id)=> ({
   //data needs to be a list of objects that work with the rest of the schema
@@ -12,13 +13,14 @@ let Plot = (data,id)=> ({
         "values":this.data
       },
       "transform":[
-        {"filter":"datum.date > datetime('2020')"}
+        {"filter":"datum.time > datetime('2020')"}
       ],
       "width":"container",
       "mark":"point",
       "encoding":{
-        "x":{"field":"date","type":"temporal"},
-        "y":{"field":"retailer","type":"ordinal"}
+        "x":{"field":"time","type":"temporal","title":"Date"},
+        "y":{"field":"name","type":"ordinal","title":"Retailers"},
+        "color":{"field":"term","type":"nominal"}
       }
 
     };
@@ -26,11 +28,12 @@ let Plot = (data,id)=> ({
     // Embed the visualization in the container with id `vis`
   },
   graph() {
-    vegaEmbed(`#${this.id.replace(/ /g,"-")}`, this.vlSpec);
+    vegaEmbed(`#-${this.id.replace(/[\s\d]/g,"-")}`, this.vlSpec);
   },
   create() {
+    console.log("data" , data)
     this.div = document.createElement('div')
-    this.div.id = this.id.replace(/ /g,"-")
+    this.div.id = "-"+this.id.replace(/[\s\d]/g,"-")
     this.div.style.width = "100%"
     document.querySelector("#charts").append(this.div)
     this.makeSpec()
@@ -47,28 +50,39 @@ let dataTransformID=(idgroup)=>{
   }
   return verboseData
 }
-export let RunVega = async ()=> {
-  let data = await fetch('./grid_data.json').then(res=>res.json())
-  console.log(data,'plotting')
-  // create all the tick marks
-  let plotGenCallback = (term)=> {
-    if (data[term] != undefined) {
-      console.log("plotting term",term)
-    //trying covid first
 
-    let termData = dataTransformID(data[term]) 
-    if (termData.length == 2) {
-      console.log("not enough data")
-      alert(`no data for '${term}'`)
-      return
-    }
-    let plt = Plot(termData,term)
-    plt.create()
+export let RunVega = async ()=> {
+  let data = await fetch('./complete_data.csv').then(res=>res.text())
+  data = d3.csvParse(data)
+  // 
+  // this tells us what dates approximately we actually hit, when no term and no count were collected in the original process
+  let justScrapeDates = data.filter(e=> e.term == "" && e.count == "")
+  //// create all the tick marks
+  let plotGenCallback = (term)=> {
+    let termData = data.filter(e=> e.term == term || e.term== "").map(e=> {
+    if (e.term== "") {
+      e.name = e.name + "_scrapes"
     } else {
-      console.log("term not found",term)
+      e.name = e.name + "_term_hits"
+    }
+      return e
+  }
+  )
+    if (termData.length != 0) {
+      let plt = Plot(termData,term)
+      plt.create()
     }
   }
-  let sortedKeys = Object.keys(data).sort()
+  // all terms
+  let sortedKeys =data.reduce((acc,cur)=> {
+    if (cur.term == "") {
+      return acc
+    }
+    if (acc.indexOf(cur.term) == -1) {
+      acc.push(cur.term)
+    }
+    return acc
+  },[]).sort()
   for (let term of sortedKeys) {
     let TE = new TickEle({
       target:document.querySelector("#tickBoxes"),
